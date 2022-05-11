@@ -15,7 +15,7 @@ author:
   first_name: 'Muhammad Umair'
   last_name: 'Khan'
 ---
-On April 30th, 2021, after spending almost 8 years in an individual contributor role, I stepped into the uncharted waters known as “Engineering Management”. Having spent almost a year as an EM, I’ve realised that it's a complex mix of engineering and management. Let’s zoom in.
+On May 30th, 2021, after spending almost 8 years in an individual contributor role, I stepped into the uncharted waters known as “Engineering Management”. Having spent almost a year as an EM, I’ve realised that it's a complex mix of engineering and management. Let’s zoom in.
 
 ### Why do we need an Engineering Manager (EM) on the team?
 Software products are an intersection between the business and engineering functions within a company. To lead a software product (or a part of it), team needs a leader who not only knows the business but can also engineer the product behind the business. Engineering managers are the people who interface between engineering and business and naturally are critical to the success of a software product. Having a leader who is missing on either business or the engineering capabilities can prove to be a matter of success or failure for the software product.
