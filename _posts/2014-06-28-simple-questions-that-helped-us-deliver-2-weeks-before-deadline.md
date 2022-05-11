@@ -3,8 +3,7 @@ layout: post
 title: Simple questions that helped us deliver 2 weeks before deadline
 date: 2014-06-28 10:20:59.000000000 +05:00
 tags:
-- Software Development
-- YAGNI
+- Software Engineering Management
 status: publish
 type: post
 published: true

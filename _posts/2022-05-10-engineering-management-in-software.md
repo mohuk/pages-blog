@@ -3,8 +3,7 @@ layout: post
 title: Engineering Management in Software
 date: 2022-05-10 04:59:17.000000000 +05:00
 tags:
-- Engineering Management
-- Software
+- Software Engineering Management
 status: publish
 type: post
 published: true
