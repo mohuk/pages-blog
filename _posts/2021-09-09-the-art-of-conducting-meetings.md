@@ -1,7 +1,7 @@
 ---
 layout: post
 title: The art of conducting meetings
-date: 2022-09-09 04:59:17.000000000 +05:00
+date: 2021-09-09 04:59:17.000000000 +05:00
 tags:
 - Software Engineering Management
 status: publish
