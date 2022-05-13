@@ -11,7 +11,7 @@ layout:
 tabs:
   # format: <filename_without_extension>: <value>
   home: Home
-  categories: Categories
+  # categories: Categories
   tags: Tags
   archives: Archives
   about: About
@@ -73,6 +73,6 @@ post:
   pin_prompt: Pinned
 
 # categories page
-categories:
-  category_measure: categories
-  post_measure: posts
+# categories:
+#   category_measure: categories
+#   post_measure: posts
