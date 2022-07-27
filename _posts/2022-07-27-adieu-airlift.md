@@ -4,6 +4,7 @@ title: Adieu Airlift
 date: 2022-07-27 04:59:17.000000000 +05:00
 tags:
 - Software Engineering Management
+- Thoughts
 status: publish
 type: post
 published: true
