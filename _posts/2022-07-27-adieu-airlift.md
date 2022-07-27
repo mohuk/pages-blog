@@ -27,7 +27,7 @@ Jan 2021, I was visiting my sister’s in Istanbul, Turkey. I quickly realized t
 #### Enter Airlift:
 I landed back in Karachi after a month. Naturally there was no grocery at home. We couldn’t find a place to shop at 4 in the morning. On the 17th of Jan, 2021, I downloaded Airlift and received my first order, right at my doorstep. This is where it hit me. I wanted to join Airlift. I wanted to experience it. A month later, I was interviewing at Airlift. May, 30th, 2021 was my first day as Engineering Manager at Airlift.
 
-#### "I believe I can fly"
+#### *"I believe I can fly"*
 Getting into Airlift was just the tip of the iceberg but for once I felt “sky's the limit”. In a few months, an engineer who couldn’t even decide his next project was challenging a product with feature requisitions, re-organizing teams for throughput, hiring talent and building software for scale. The aura made me feel powerful. I quickly realized that I had spread my wings and was ready to fly.
 
 #### The Landing
