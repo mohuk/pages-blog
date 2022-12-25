@@ -28,16 +28,22 @@ I decided that notification should be an SMS to avoid complicating the system. T
 Running the above cycle few times a day means we’d have to be super lazy to miss them. Next step, Code!
 
 #### Engineering Details:
-The entire process just need to run once every few hours and was completely independent of state. Such workflows are tailor made for serverless apps. A Lambda function, scheduled to run through CloudWatch Events and sending an SMS through SNS should suffice.
+To decide on how to build this, I asked myself the following questions:
+
+- How long will each execution take to run? - *few seconds*
+- How often will we need to schedule executions? - *every 6 hours*
+- Does the application need any datastore or state? - *no*
+
+Answers above coupled with no infra to manage, serverless became an obvious choice. A Lambda function, scheduled to run through CloudWatch Events and sending an SMS through SNS should suffice.
 
 ![AWS flow](/assets/img/2022-12-25-img-02.png)
 
-*I will not be diving into the how to’s as there is a lot of content on the internet on setting up Lambda functions, CloudWatch alarms and sending SMS via SNS.*
+*I will not be diving into the how to’s as there is a lot of content available on the internet on setting up Lambda functions, CloudWatch alarms and sending SMS via SNS.*
 
 #### Keeping it under free-tier:
-While I want things to be easy for me, I don’t want to spend money for a feature the school engineering team should have provided out of the box. Free tier limits for AWS Lambda, SNS and CloudWatch are very gracious for a use case like this. The only challenge for me was the SMS which is never free. AWS SNS sandbox provides upto 10 numbers on which SMS can be sent as part of testing which is more than enough for me. I added a couple of phone numbers and started receiving SMS-es at not cost.
+It makes no sense to spend money on a feature the school engineering team should have provided out of the box. Free tier limits for AWS Lambda, SNS and CloudWatch are very gracious for a use case like this. The only challenge for me was the SMS, which are never free. AWS SNS sandbox provides upto 10 numbers on which SMS-es can be sent without incurring any cost. This was more than enough for me. I added a couple of phone numbers and started receiving SMS-es at no-cost.
 
 #### Final outlook:
-CloudWatch events make the Lambda run every few hours to check for updates and notifies me and my wife via an SMS. This is definately helping us stay up to date on the school conversations. 
+CloudWatch events make the Lambda run every few hours (just like a cron) to check for updates and notifies me and my wife via an SMS. This is definitely helping us stay up to date on the school conversations. 
 
 The code can be found [here](https://github.com/mohuk/fps-connect-notifications). One fine day, I will move this to AWS CDK.
