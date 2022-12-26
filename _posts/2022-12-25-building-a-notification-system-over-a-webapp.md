@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Engineering Notifications over a Web app
+title: Building a notification system over a webapp
 date: 2022-12-25 04:59:17.000000000 +05:00
 tags:
 - Software Engineering
@@ -44,6 +44,6 @@ Answers above, coupled with no desire to manage infrastructure, serverless on AW
 It makes no sense to spend money on a feature the school engineering team should have provided out of the box. Free tier limits for AWS Lambda, SNS and CloudWatch are very gracious for a use case like this. The only challenge for me was the SMS which are never free. AWS SNS sandbox provides upto 10 numbers on which SMS-es can be sent without incurring any cost. This was more than enough for me. I added a couple of phone numbers and started receiving SMS-es at no-cost.
 
 #### Final outlook:
-CloudWatch events make the Lambda run every few hours (just like a cron) to check for updates and notifies me and my wife via an SMS. This is definitely helping us stay up to date on the school conversations. 
+The notification system is definitely helping us stay on top of the school events. A similar notification system can be build upon practically any web application provided you stay within their server constraints.
 
 The code can be found [here](https://github.com/mohuk/fps-connect-notifications). One fine day, I will move this to AWS CDK.
