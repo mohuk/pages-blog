@@ -8,7 +8,7 @@ tags:
 - NodeJS
 status: publish
 type: post
-published: true
+published: false
 author:
   login: mohuk
   email: mohammad.umair.k@gmail.com
@@ -63,7 +63,7 @@ Chalking this on a whiteboard, I realized there are several problems with our se
 
 ![Static Content Delivery 1.0 - Data Transfer](/assets/img/2024-02-08-img-05.png)
 
--**No advantage taken from Regional or Edge Caches**: Every request resulting in a cache miss meant content had to be served directly from the S3 bucket in the region. Like I mentioned before, no advantage was being taken from the "Edge Location" or the "Regional Edge Cache".
+- **No advantage taken from Regional or Edge Caches**: Every request resulting in a cache miss meant content had to be served directly from the S3 bucket in the region. Like I mentioned before, no advantage was being taken from the "Edge Location" or the "Regional Edge Cache".
 
 ![Static Content Delivery 1.0](/assets/img/2024-02-08-img-06.png)
 
