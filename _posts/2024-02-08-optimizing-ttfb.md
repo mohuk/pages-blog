@@ -71,11 +71,11 @@ Chalking this on a whiteboard, I realized there are several problems with our se
 ## Solutions
 
 ### Routing fix
-The first step was to get rid of the 404s by returning the `index.html` file on all routes without a extension (png,css,woff). Internet suggested `Lambda@Edge` that has the ability to execute code before the request reaches CloudFront. 
+The first step was to get rid of the 404s by returning the `index.html` file on all routes without a extension (png,css,woff). Internet suggested that `Lambda@Edge` has the ability to execute code before the request reaches CloudFront. 
 
 ![Lambda@Edge - AWS Docs](/assets/img/2024-02-08-img-06.png)
 
-The ability to intercept a request before it reaches CloudFront Edge AKA `Viewer Request` is all I needed. In the following few lines, I was able to rewrite the incoming requests to `index.html`.
+The ability to intercept a request before it reaches CloudFront Edge i.e. `Viewer Request` is all I needed. In the following few lines, I was able to rewrite the incoming requests to `index.html`.
 
 ```javascript
 export const handler = async (event, context, callback) => {
@@ -96,30 +96,26 @@ With `Lambda@Edge` setup to execute at `Viewer Request`, I just removed the `Cus
 ![SPA Content Delivery 2.0-01](/assets/img/2024-02-08-img-07.png)
 
 ### Caching fix
-The next target was to minimize the `cache miss` illustrated in the diagrams above. To cache content, the CDN looks for the `Cache-Control` headers. A quick search yielded that our entire bucket of static content had `Cache-Control` set to `no-cache, no-store, must-revalidate`. Let's break this down:
+The next target was to minimize the `cache miss` illustrated in the diagrams above. To cache content, the CDN looks for the `Cache-Control` headers. The `Cache-Control` header in our app was set to `no-cache, no-store, must-revalidate`. Let's break this down:
 - `no-cache`: This does not mean "don't cache". Cache will always revalidate content from the source before serving.
-- `no-store`: No content would be store in **any** cache.
+- `no-store`: No content would be stored in **any** cache.
 - `must-revalidate`: Response will be reused while fresh. Response will be validated once stale.
 
-The `no-store` not allowing anything to be stored made the remaining 2 directives practically useless. Worth mentioning that `must-revalidate` always should be used with `max-age` to help the cache identify fresh content. In short, the configuration was completely broken. 
+The `no-store` not allowing anything to be stored made the `no-cache` and `must-revalidate` directives practically useless. Worth mentioning that `must-revalidate` always should be used with `max-age` to help the cache identify fresh content. In short, the configuration was completely broken. 
 
-What we wanted was the cache to reuse the responses until a reasonable amount of time has passed or there is new content available. We concluded a sweet spot would be `7 days`, and simply set our `Cache-Control` header to `must-revalidate max-age=604800`. On each new release, we programmatically invalidated all CloudFront caches to ensure the new release always results in fresh content for our users. Here it what it looked like:
+By setting `Cache-Control` header to `must-revalidate max-age=604800`, CloudFront served the cached responses until a reasonable amount of time (7 days) has passed or there is new content available. On each new release, we programmatically invalidated all CloudFront caches to ensure the new release always results in fresh content for our users. Here it what it looked like:
 
 ![SPA Content Delivery 2.0](/assets/img/2024-02-08-img-08.png)
 
 ### Enabling compression
-Simply enabling GZip compression reduced the size and transmitted data from 70% to 90% of the overall size. Enabling GZip compression is simple and requires few clicks.
-
-Steps:
-- On CloudFront, Edit `Behaviors`. 
-- In the `Cache key and origin requests` section, select `Cache policy and origin request policy (recommended)` and set `Cache Policy` to `CachingOptimized`.
+GZip can reduce the data transfer volume up to 90%. Enabling GZip only required setting the `CacheOptimized` policy under `Behaviors` of the CloudFront distribution.
 
 ## Interesting discovery - Lambda@Edge vs CloudFront Functions
-While monitoring the logs I noticed that all content is being served from Frankfurt. Almost all of our customer base is in Saudi Arabia and not serving content from Mumbai (our deployment region), was definitely an improvement. I wondered if there were still a few more millisecond I could reduce. Reading online I discovered how AWS lays out its caches and the stark differences between an `Edge Cache` and a `Regional Cache`.
+While monitoring the logs I noticed that all content is being served from Frankfurt. With most of our customer base in Saudi Arabia, not serving content from Mumbai (our deployment region) was definitely a win. I wondered if there were still a few more millisecond I could reduce by serving from an `Edge Location` instead of a `Regional Edge Cache`.
 
-**tl;dr** `Edge Location` serves content with reduced latency because it is nearer to the users as compared to the `Regional Edge Cache`.
+> **tl;dr** `Edge Location` serves content with reduced latency because it is nearer to the users as compared to the `Regional Edge Cache`.
 
-The reason why all our content was being served from Frankfurt is because `Lambda@Edge` executes only on the Regional Edge Cache. Since our routing logic was simple, moving it to `CloudFront Functions` (Event source: Viewer Request) was the better choice. A clear reduction of approx. 100ms was noticed by moving from `Lambda@Edge` to `CloudFront Functions` You can find all the difference between Lambda@Edge and `CloudFront Functions` at [this link](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/edge-functions-choosing.html).
+The reason why all our content was being served from Frankfurt is because `Lambda@Edge` executes only on the Regional Edge Cache. Since our routing logic was simple, moving it to `CloudFront Functions` (Event source: Viewer Request) was the better choice. A clear reduction of approx. `100ms` was noticed by moving from `Lambda@Edge` to `CloudFront Functions` You can find all the difference between Lambda@Edge and `CloudFront Functions` at [this link](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/edge-functions-choosing.html).
 
 ![AWS CloudFront CDN](/assets/img/2024-02-08-img-09.png)
 
