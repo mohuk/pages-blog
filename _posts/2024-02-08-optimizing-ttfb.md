@@ -110,7 +110,7 @@ The reason why all our content was being served from Frankfurt is because `Lambd
 ![AWS CloudFront CDN](/assets/img/2024-02-08-img-09.png)
 
 ## Bonus Discovery along the way
-Lighthouse also indicated that served content is uncompressed resulting in high volumes of data transfer. Enabling GZip compression can reduced the data transfer volume up by 75%. Enabling GZip only required setting the `CacheOptimized` policy under `Behaviors` of the CloudFront distribution.
+Lighthouse also indicated that served content is uncompressed resulting in high volumes of data transfer. Enabling GZip compression can reduce the data transfer volume up by 75%. Enabling GZip only required setting the `CacheOptimized` policy under `Behaviors` of the CloudFront distribution.
 
 ## Results
 I recorded the TTFB numbers from 4PM to 9AM (the next day) for 3 consecutive weekdays to test the hypothesis. Here are the results:
