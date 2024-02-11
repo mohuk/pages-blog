@@ -62,8 +62,6 @@ Chalking this on a whiteboard, I realized there are several problems with our se
 
 - **All initial page loads were 404s with `index.html`**: It works but it has its side effects which maybe unknown. One such example is, running "Lighthouse" page load performance refuses to compute results because `index.html` has a `404 - Not Found` status.
 
-- **No compression**: Lighthouse also indicated that served content is uncompressed resulting in high volumes of data transfer.
-
 - **All requests were resulting in a cache miss**: Each cache miss resulted in content being delivered directly from the origin. No advantage was being taken from the intermediate caches. Mumbai (our primary region) was serving the entire world irrespective of distance.
 
 ![Static Content Delivery 1.0](/assets/img/2024-02-08-img-05.png)
@@ -107,9 +105,6 @@ By setting `Cache-Control` header to `must-revalidate max-age=604800`, CloudFron
 
 ![SPA Content Delivery 2.0](/assets/img/2024-02-08-img-08.png)
 
-### Enabling compression
-GZip can reduce the data transfer volume up to 90%. Enabling GZip only required setting the `CacheOptimized` policy under `Behaviors` of the CloudFront distribution.
-
 ## Interesting discovery - Lambda@Edge vs CloudFront Functions
 While monitoring the logs I noticed that all content is being served from Frankfurt. With most of our customer base in Saudi Arabia, not serving content from Mumbai (our deployment region) was definitely a win. I wondered if there were still a few more millisecond I could reduce by serving from an `Edge Location` instead of a `Regional Edge Cache`.
 
@@ -118,6 +113,9 @@ While monitoring the logs I noticed that all content is being served from Frankf
 The reason why all our content was being served from Frankfurt is because `Lambda@Edge` executes only on the Regional Edge Cache. Since our routing logic was simple, moving it to `CloudFront Functions` (Event source: Viewer Request) was the better choice. A clear reduction of approx. `100ms` was noticed by moving from `Lambda@Edge` to `CloudFront Functions` You can find all the difference between Lambda@Edge and `CloudFront Functions` at [this link](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/edge-functions-choosing.html).
 
 ![AWS CloudFront CDN](/assets/img/2024-02-08-img-09.png)
+
+## Bonus Discovery along the way
+Lighthouse also indicated that served content is uncompressed resulting in high volumes of data transfer. Enabling GZip compression can reduced the data transfer volume up by 75%. Enabling GZip only required setting the `CacheOptimized` policy under `Behaviors` of the CloudFront distribution.
 
 ## Results
 I recorded the TTFB numbers from 4PM to 9AM (the next day) for 3 consecutive weekdays to test the hypothesis. Here are the results:
