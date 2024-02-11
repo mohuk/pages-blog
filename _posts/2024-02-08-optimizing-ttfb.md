@@ -52,7 +52,7 @@ The numbers proved we were not `Poor` but not `Good` either.
 > ... we decided to punch above our waist and set our target to reduce TTFB to less than `500ms`.
 
 ## Current Content Delivery Setup
-Our Platform Webapp is an Single Page Application built with Angular, being served from Mumbai through AWS CloudFront. SPAs require a specific kind of routing where each registered route within the application should return the `index.html` file. Our current setup on CloudFront was doing that but in a strange way. Each registered route resulted in a `Http 404`, which we intercepted and returned the `index.html` file along with it.
+Our Platform Webapp is a Single Page Application built with Angular, being served from Mumbai through AWS CloudFront. SPAs require a specific kind of routing where each registered route within the application should return the `index.html` file. Our current setup on CloudFront was doing that but in a strange way. Each registered route resulted in a `Http 404`, which we intercepted and returned the `index.html` file along with it.
 
 ![Static Content Delivery 1.0](/assets/img/2024-02-08-img-04.png)
 
