@@ -52,13 +52,13 @@ The numbers proved we were not `Poor` but not `Good` either.
 > ... we decided to punch above our waist and set our target to reduce TTFB to less than `500ms`.
 
 ## Current Content Delivery Setup
-Single Page Applications require a specific kind of routing where each registered route within the application should return the `index.html` file. Our current setup on CloudFront was doing that but in a strange way. Each registered route resulted in a `Http 404`, which we intercepted and returned the `index.html` file along with it.
+Our Platform Webapp is an Single Page Application built with Angular, being served from Mumbai through AWS CloudFront. SPAs require a specific kind of routing where each registered route within the application should return the `index.html` file. Our current setup on CloudFront was doing that but in a strange way. Each registered route resulted in a `Http 404`, which we intercepted and returned the `index.html` file along with it.
 
 ![Static Content Delivery 1.0](/assets/img/2024-02-08-img-04.png)
 
 ## Limitations of the current Content Delivery setup
 
-Chalking this on a whiteboard, I realized there are several problems with our setup:
+I realized there are several problems with our setup:
 
 - **All initial page loads were 404s with `index.html`**: It works but it has its side effects which maybe unknown. One such example is, running "Lighthouse" page load performance refuses to compute results because `index.html` has a `404 - Not Found` status.
 
