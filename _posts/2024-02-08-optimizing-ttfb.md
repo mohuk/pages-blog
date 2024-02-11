@@ -72,7 +72,7 @@ The lifecycle events illustrated below forms the foundations of all the performa
 ### Routing fix
 The first step was to get rid of the 404s by returning the `index.html` file on all routes without an extension (png,css,woff). Internet suggested that `Lambda@Edge` has the ability to execute code before the request reaches CloudFront. 
 
-The ability to intercept a request before it reaches CloudFront Edge i.e. `Viewer Request` is all I needed. In the following few lines, I was able to rewrite the incoming requests to `index.html`.
+The ability to intercept a request before it reaches CloudFront Cache i.e. `Viewer Request` is all I needed. In the following few lines, I was able to rewrite the incoming requests to `index.html`.
 
 ```javascript
 export const handler = async (event, context, callback) => {
