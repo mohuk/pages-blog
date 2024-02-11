@@ -64,14 +64,13 @@ Chalking this on a whiteboard, I realized there are several problems with our se
 
 - **All requests were resulting in a cache miss**: Each cache miss resulted in content being delivered directly from the origin. No advantage was being taken from the intermediate caches. Mumbai (our primary region) was serving the entire world irrespective of distance.
 
-![Static Content Delivery 1.0](/assets/img/2024-02-08-img-05.png)
-
 ## Solutions
+The lifecycle events illustrated below forms the foundations of all the performance gains, so pay close attention to it.
+
+![Lambda@Edge - AWS Docs](/assets/img/2024-02-08-img-06.png)
 
 ### Routing fix
 The first step was to get rid of the 404s by returning the `index.html` file on all routes without a extension (png,css,woff). Internet suggested that `Lambda@Edge` has the ability to execute code before the request reaches CloudFront. 
-
-![Lambda@Edge - AWS Docs](/assets/img/2024-02-08-img-06.png)
 
 The ability to intercept a request before it reaches CloudFront Edge i.e. `Viewer Request` is all I needed. In the following few lines, I was able to rewrite the incoming requests to `index.html`.
 
@@ -91,8 +90,6 @@ export const handler = async (event, context, callback) => {
 
 With `Lambda@Edge` setup to execute at `Viewer Request`, I just removed the `Custom error response` from `Error pages` to rid the setup for `404` intercepts.
 
-![SPA Content Delivery 2.0-01](/assets/img/2024-02-08-img-07.png)
-
 ### Caching fix
 The next target was to minimize the `cache miss` illustrated in the diagrams above. To cache content, the CDN looks for the `Cache-Control` headers. The `Cache-Control` header in our app was set to `no-cache, no-store, must-revalidate`. Let's break this down:
 - `no-cache`: This does not mean "don't cache". Cache will always revalidate content from the source before serving.
@@ -101,9 +98,7 @@ The next target was to minimize the `cache miss` illustrated in the diagrams abo
 
 The `no-store` not allowing anything to be stored made the `no-cache` and `must-revalidate` directives practically useless. Worth mentioning that `must-revalidate` always should be used with `max-age` to help the cache identify fresh content. In short, the configuration was completely broken. 
 
-By setting `Cache-Control` header to `must-revalidate max-age=604800`, CloudFront served the cached responses until a reasonable amount of time (7 days) has passed or there is new content available. Setting the correct cache headers also enabled `ETag` on each request resulting in a `Http 304 Not Modified` if the content did not change. For new releases, we programmatically invalidated all CloudFront caches to ensure the new release always results in fresh content for our users. Here it what it looked like:
-
-![SPA Content Delivery 2.0](/assets/img/2024-02-08-img-08.png)
+By setting `Cache-Control` header to `must-revalidate max-age=604800`, CloudFront served the cached responses until a reasonable amount of time (7 days) has passed or there is new content available. Setting the correct cache headers also enabled `ETag` on each request resulting in a `Http 304 Not Modified` if the content did not change. For new releases, we programmatically invalidated all CloudFront caches to ensure the new release always results in fresh content for our users.
 
 ## Icing on the cake - CloudFront Functions
 While monitoring the logs I noticed that all content is being served from Frankfurt. With most of our customer base in Saudi Arabia, not serving content from Mumbai (our deployment region) was definitely a win. I wondered if there were still a few more millisecond I could reduce by serving from an `Edge Location` instead of a `Regional Edge Cache`.
@@ -130,5 +125,9 @@ And here are the numbers for the amount of data transferred for 2 consecutive mo
 |**Dates**|**Data Transferred**|
 |25th Oct - 24th Nov| 9.49 GB|
 |25th Nov - 25th Dec|2.02 GB|
+
+And our final content delivery setup became:
+
+![SPA Content Delivery 2.0](/assets/img/2024-02-08-img-08.png)
 
 Overall, the results came out to be just fantastic. The 75pc of **TTFB was reduced by 50%** and the **Total Data Transfer was reduced by 75%** on average. Target of reducing TTFB to less than 500ms was successfully achieved.
