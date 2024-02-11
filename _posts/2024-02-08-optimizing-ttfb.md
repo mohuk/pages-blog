@@ -56,7 +56,7 @@ Single Page Applications require a specific kind of routing where each registere
 
 ![Static Content Delivery 1.0](/assets/img/2024-02-08-img-04.png)
 
-## Limitations of our current Content Delivery setup
+## Limitations of the current Content Delivery setup
 
 Chalking this on a whiteboard, I realized there are several problems with our setup:
 
@@ -101,11 +101,11 @@ The next target was to minimize the `cache miss` illustrated in the diagrams abo
 
 The `no-store` not allowing anything to be stored made the `no-cache` and `must-revalidate` directives practically useless. Worth mentioning that `must-revalidate` always should be used with `max-age` to help the cache identify fresh content. In short, the configuration was completely broken. 
 
-By setting `Cache-Control` header to `must-revalidate max-age=604800`, CloudFront served the cached responses until a reasonable amount of time (7 days) has passed or there is new content available. On each new release, we programmatically invalidated all CloudFront caches to ensure the new release always results in fresh content for our users. Here it what it looked like:
+By setting `Cache-Control` header to `must-revalidate max-age=604800`, CloudFront served the cached responses until a reasonable amount of time (7 days) has passed or there is new content available. Setting the correct cache headers also enabled `ETag` on each request resulting in a `Http 304 Not Modified` if the content did not change. For new releases, we programmatically invalidated all CloudFront caches to ensure the new release always results in fresh content for our users. Here it what it looked like:
 
 ![SPA Content Delivery 2.0](/assets/img/2024-02-08-img-08.png)
 
-## Interesting discovery - Lambda@Edge vs CloudFront Functions
+## Icing on the cake - CloudFront Functions
 While monitoring the logs I noticed that all content is being served from Frankfurt. With most of our customer base in Saudi Arabia, not serving content from Mumbai (our deployment region) was definitely a win. I wondered if there were still a few more millisecond I could reduce by serving from an `Edge Location` instead of a `Regional Edge Cache`.
 
 > **tl;dr** `Edge Location` serves content with reduced latency because it is nearer to the users as compared to the `Regional Edge Cache`.
