@@ -31,7 +31,7 @@ A Single Page Application (SPA) has to deliver the `index.html` file to the brow
 **With the case established for optimizing TTFB, we decided to punch above our waist and set our target to reduce TTFB to less than `500ms`.**
 
 ## What is a good TTFB score?
-The quicker, the better. However most sources on the internet say that anything below `800ms` is good.
+The quicker, the better. However it is understood that anything below `800ms` is good.
 
 ![TTFB Score](/assets/img/2024-02-08-img-01.png)
 
@@ -39,9 +39,9 @@ The quicker, the better. However most sources on the internet say that anything 
 
 *"You cannot improve what you don't measure"*.
 
-A quick search on the internet provided me with the following options to measure TTFB:
-- Network Tab of Chrome (and other browsers)
-- Performance analysis through Lighthouse
+You can measure TTFB by:
+- Network Tab of the browser
+- Performance analysis through Lighthouse (or a similar tool)
 
 It is important to understand that TTFB depends on many factors resulting in different measures for each user. Measuring a 75th percentile of Average TTFB across all users was more meaningful to track as compared to single user values provided by the options mentioned above. I was able to setup the graph using [Real User Monitoring (RUM)](https://docs.datadoghq.com/real_user_monitoring/) on Datadog.
 
@@ -70,7 +70,7 @@ The lifecycle events illustrated below forms the foundations of all the performa
 ![Lambda@Edge - AWS Docs](/assets/img/2024-02-08-img-06.png)
 
 ### Routing fix
-The first step was to get rid of the 404s by returning the `index.html` file on all routes without an extension (png,css,woff). Internet suggested that `Lambda@Edge` has the ability to execute code before the request reaches CloudFront. 
+The first step was to get rid of the 404s by returning the `index.html` file on all routes without an extension (png,css,woff). `Lambda@Edge`, which is a specific kind of lambda function has the ability to execute code before the request reaches CloudFront. 
 
 The ability to intercept a request before it reaches CloudFront Cache i.e. `Viewer Request` is all I needed. In the following few lines, I was able to rewrite the incoming requests to `index.html`.
 
